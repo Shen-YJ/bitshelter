@@ -26,7 +26,7 @@ contract Insurance {
 	function back(){
 		if(msg.value==liability){
 			insurer=msg.sender;
-			insurer.send(premium);
+			insurer.send(premium - 200 finney);
 		}
 		else throw;
 	}
