@@ -1,4 +1,6 @@
-//Author Davide Carboni
+//A simple learn how to do insurance contract in Solidity
+//Author Davide "dada" Carboni
+//Licensed under MIT
 
 contract Insurance {
 	uint premium;
@@ -6,12 +8,15 @@ contract Insurance {
 	uint    compensation=0;
 	address insurer=0;
 	address subscriber=0;
+	address contractCreator=0;
 	uint    state=0; 
 	uint CREATED=1; 
 	uint SUBSCRIBED=2;
 	uint ACTIVE=3;
 	uint CLAIMED=4;
-	uint TERMINATED=5;
+	uint EXPIRED=5;
+	uint PAID=6;
+	uint REJECTED=7;
 	
 	uint constant profit = 200 finney;
 	uint duration;
@@ -19,7 +24,7 @@ contract Insurance {
 	event Subscription(address,uint);
 	
 	function Insurance(address anOracle,uint aPremium,uint comp, uint ttl) {
-		
+		contractCreator = msg.sender;
 		oracle = anOracle;
 		premium = aPremium * 1 ether;
 		compensation = comp * 1 ether;
@@ -55,6 +60,34 @@ contract Insurance {
 		}
 		else throw;
 	}
+	
+	function claim(){
+		if(now > expireTime){
+			state = EXPIRED;
+			insurer.send(compensation);
+			selfdestruct(contractCreator);
+		}
+		if(state!=ACTIVE)throw;
+		if(msg.sender != subscriber)throw;
+		state=CLAIMED;
+	}
+	
+	function oracleDeclareClaim(bool isTrue){
+		if(state != CLAIMED)throw;
+		if(msg.sender!=oracle)throw;
+		if(isTrue){
+			subscriber.send(compensation);
+			state = PAID;
+		}else{
+			state = REJECTED;
+			insurer.send(compensation);
+			
+		}
+		selfdestruct(contractCreator);
+	}
+	
+	
+	
 	
 
 
