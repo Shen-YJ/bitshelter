@@ -4,12 +4,13 @@
 
 contract Insurance {
 	uint premium;
-	address oracle=0;
-	uint    compensation=0;
-	address insurer=0;
-	address subscriber=0;
-	address contractCreator=0;
-	uint    state=0; 
+	address oracle;
+	uint    compensation;
+	address insurer;
+	address subscriber;
+	address contractCreator;
+		
+	uint state=0; 
 	uint CREATED=1; 
 	uint SUBSCRIBED=2;
 	uint ACTIVE=3;
@@ -32,7 +33,6 @@ contract Insurance {
 		bool valid;
 		valid = oracle !=0 && premium !=0 && compensation!=0 && duration!=0;
 		if (!valid) throw;
-		
         state = CREATED;
 	}
 	function subscribe() {
