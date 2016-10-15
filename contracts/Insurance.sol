@@ -1,7 +1,7 @@
 //A basic learning-by-doing insurance contract in Solidity
 //Author Davide "dada" Carboni
 //Licensed under MIT
-
+pragma solidity ^0.4.2;
 contract Insurance {
 
 	//premium is what you pay to subscribe the policy
@@ -22,7 +22,7 @@ contract Insurance {
 	//contractCreator is who deploys the contract for profit
 	address contractCreator;
 
-	//the contract goes throught many states
+	//the contract goes through many states
 	uint      state;
 	uint      CREATED=0;
 	uint			VALID=1;
@@ -68,7 +68,7 @@ contract Insurance {
 	}
 
 
-	function subscribe() {
+	function subscribe() payable {
 		//is in the proper state?
 		if(state != VALID) throw;
 
@@ -81,12 +81,12 @@ contract Insurance {
 			state = SUBSCRIBED;
 
 			//the contract creator grabs his money
-			contractCreator.send(profit);
+			if(!contractCreator.send(profit)) throw;
 		}
 		else throw;
 	}
 
-	function back(){
+	function back() payable{
 	    //check proper state
 		if(state != SUBSCRIBED) throw;
 
@@ -96,10 +96,10 @@ contract Insurance {
 		//must lock the exact sum for protection
 		if(msg.value==protection){
 			insurer=msg.sender;
-
+      state = ACTIVE;
 			//insurer gets his net gain
-			insurer.send(premium - profit);
-			state = ACTIVE;
+			if(!insurer.send(premium - profit)) throw; //this prevents re-entrant code
+
 			expireTime = now + duration;
 		}
 		else throw;
@@ -109,7 +109,7 @@ contract Insurance {
 		//if expired unlock sum to insurer and destroy contract
 		if(now > expireTime){
 			state = EXPIRED;
-			insurer.send(protection);
+			if(!insurer.send(protection))throw;
 			selfdestruct(contractCreator);
 		}
 
@@ -133,11 +133,12 @@ contract Insurance {
 
 		//if claim is legit then send money to subscriber
 		if(isTrue){
-			subscriber.send(protection);
 			state = PAID;
+			if(!subscriber.send(protection))throw;
+
 		}else{
 			state = REJECTED;
-			insurer.send(protection);
+			if(!insurer.send(protection))throw;
 
 		}
 
