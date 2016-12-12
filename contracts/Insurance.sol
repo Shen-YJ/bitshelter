@@ -23,15 +23,15 @@ contract Insurance {
 	address contractCreator;
 
 	//the contract goes through many states
-	uint      state;
-	uint      CREATED=0;
-	uint			VALID=1;
-	uint			SUBSCRIBED=2;
-	uint			ACTIVE=3;
-	uint			CLAIMED=4;
-	uint			EXPIRED=5;
-	uint			PAID=6;
-	uint		  REJECTED=7;
+	uint state;
+	uint CREATED=0;
+	uint VALID=1;
+	uint SUBSCRIBED=2;
+	uint ACTIVE=3;
+	uint CLAIMED=4;
+	uint EXPIRED=5;
+	uint PAID=6;
+	uint REJECTED=7;
 
 	//let's assign a fixed profit to who created the contract
 	uint constant profit = 200 finney;
