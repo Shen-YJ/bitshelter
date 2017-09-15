@@ -1,3 +1,5 @@
+// DISCONTINUED PROJECT, see https://github.com/dadaista/eth_portfolio
+
 //A basic learning-by-doing insurance contract in Solidity
 //Author Davide "dada" Carboni
 //Licensed under MIT
